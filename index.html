@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kittens And Candy</title>
+    <title>Restricted Area</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #050505;
-            color: #00ff33; /* Glitchy terminal green */
+            background-color: #030303;
+            color: #ff2222;
             font-family: 'Courier New', Courier, monospace;
-            height: 100vh;
-            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
         }
 
-        /* Ambient scanline background overlay */
+        /* Scanline effect for retro CRT monitor feel */
         body::before {
             content: " ";
             display: block;
-            position: fixed;
+            position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             z-index: 2;
@@ -30,151 +31,132 @@
             pointer-events: none;
         }
 
-        .terminal-box {
-            width: 90%;
-            max-width: 700px;
-            padding: 30px;
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid #00ff33;
-            box-shadow: 0 0 20px rgba(0, 255, 51, 0.2);
+        .container {
+            max-width: 600px;
+            padding: 40px;
+            border: 3px dashed #ff2222;
+            background-color: #0a0000;
+            box-shadow: 0 0 15px rgba(255, 34, 34, 0.2);
+            border-radius: 4px;
             position: relative;
+            z-index: 1;
         }
 
-        .glitch-title {
-            font-size: 2rem;
+        h1 {
+            font-size: 2.8rem;
             text-transform: uppercase;
+            letter-spacing: 2px;
             margin-bottom: 20px;
-            animation: glitch 1s linear infinite;
+            font-weight: 900;
+            text-shadow: 0 0 8px #ff2222;
+            animation: terminalBlink 0.8s steps(2, start) infinite;
         }
 
-        .system-log {
+        /* Sharp terminal blink */
+        @keyframes terminalBlink {
+            to {
+                visibility: hidden;
+                text-shadow: none;
+            }
+        }
+
+        p {
             font-size: 1.1rem;
+            color: #ff6666;
             line-height: 1.6;
             margin-bottom: 30px;
-            min-height: 120px;
+            text-transform: uppercase;
         }
 
-        /* Fake Input Prompt styling */
-        .prompt {
-            border-bottom: 2px solid #00ff33;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-        .prompt input {
-            background: transparent;
-            border: none;
-            color: #00ff33;
-            font-family: inherit;
+        .leave-btn {
+            display: inline-block;
+            background-color: transparent;
+            color: #ff2222;
+            border: 2px solid #ff2222;
+            padding: 15px 30px;
             font-size: 1.2rem;
-            width: 70%;
-            outline: none;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(255, 34, 34, 0.3);
+            transition: all 0.1s ease;
         }
 
-        /* Glitch text effect animation */
-        @keyframes glitch {
-            0% { text-shadow: 2px 3px 0 #f0f, -2px -3px 0 #0ff; }
-            33% { text-shadow: -2px 3px 0 #f0f, 2px -3px 0 #0ff; }
-            66% { text-shadow: 2px -3px 0 #f0f, -2px 3px 0 #0ff; }
-            100% { text-shadow: -2px -3px 0 #f0f, 2px 3px 0 #0ff; }
+        .leave-btn:hover {
+            background-color: #ff2222;
+            color: #0a0000;
+            box-shadow: 0 0 15px #ff2222;
         }
-
-        /* Sudden Fullscreen Flash Scare Overlay */
-        #flash-overlay {
+        
+        .interaction-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #ffffff; /* Blinding white flash */
-            z-index: 99999;
-            display: none;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 0, 0, 0.95);
+            z-index: 10;
+            display: flex;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
         }
-
-        #flash-overlay.active {
-            display: flex;
-            animation: invert-flash 0.15s steps(2) infinite;
-        }
-
-        @keyframes invert-flash {
-            0% { background-color: #ffffff; filter: invert(0); }
-            50% { background-color: #000000; filter: invert(1); }
-        }
-
-        .creepy-face {
-            font-size: 15rem;
-            color: #ff0000;
-            font-weight: bold;
-            transform: scale(1);
-            animation: pulse 0.05s infinite alternate;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); }
-            100% { transform: scale(1.1); }
+        
+        .interaction-text {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: terminalBlink 1.2s steps(2, start) infinite;
         }
     </style>
 </head>
 <body>
 
-    <div class="terminal-box">
-        <div class="glitch-title">> CRITICAL_SECURITY_BREACH</div>
-        <div class="system-log" id="log-text">Connecting to local device...</div>
-        
-        <div class="prompt">
-            <span>$ Type "ABORT" to cancel download: </span>
-            <input type="text" id="user-input" autocomplete="off" autofocus oninput="checkInput(this)">
-        </div>
+    <!-- Modern browsers block autoplay sound until the user clicks somewhere on the page -->
+    <div id="overlay" class="interaction-overlay" onclick="startAlarm()">
+        <div class="interaction-text">&gt; DO NOT CLICK HERE! &lt;</div>
     </div>
 
-    <!-- Hidden Scare Trigger -->
-    <div id="flash-overlay">
-        <!-- Text-based face vector / terrifying ascii look -->
-        <div class="creepy-face">👁_👁</div>
+    <div class="container">
+        <h1>ACCESS DENIED</h1>
+        <p>YUH CYAH READ AR YUH DEF?<br>EXIT IMMEDIATELY.</p>
+        <button class="leave-btn" onclick="window.location.href='https://google.com';">TERMINATE SESSION</button>
     </div>
 
     <script>
-        const logs = [
-            "Root access granted.",
-            "Fetching local coordinate details...",
-            "Accessing integrated camera feed...",
-            "Downloading local storage files... 42%",
-            "Downloading local storage files... 89%",
-            "THREAT DETECTED. WE SEE YOU."
-        ];
-        
-        let currentLogIndex = 0;
-        const logElement = document.getElementById('log-text');
+        let audioCtx;
+        let alarmInterval;
 
-        // Cycle through ominous fake terminal outputs
-        const logInterval = setInterval(() => {
-            if (currentLogIndex < logs.length) {
-                logElement.innerHTML += `<br>> ${logs[currentLogIndex]}`;
-                currentLogIndex++;
-            } else {
-                clearInterval(logInterval);
-                // Trigger scare automatically after 3 seconds if they haven't typed
-                setTimeout(triggerScare, 3000);
-            }
-        }, 1500);
+        function startAlarm() {
+            // Remove the overlay once clicked
+            document.getElementById('overlay').style.display = 'none';
 
-        // Instantly scare them if they attempt to interact or type anything
-        function checkInput(inputElement) {
-            if (inputElement.value.length > 0) {
-                triggerScare();
-            }
-        }
+            // Web Audio API synthesizes a classic retro dual-tone alarm entirely in code
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            let highTone = true;
 
-        function triggerScare() {
-            const overlay = document.getElementById('flash-overlay');
-            overlay.classList.add('active');
-
-            // Force browser audio context if applicable
-            // let scream = new Audio('YOUR_DISTORTED_STATIC_SOUND.mp3');
-            // scream.play();
+            alarmInterval = setInterval(() => {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                
+                // Square wave gives that distinct retro/terminal buzzer sound
+                osc.type = 'square'; 
+                osc.frequency.setValueAtTime(highTone ? 880 : 440, audioCtx.currentTime); 
+                
+                // Sharp volume envelope
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+                
+                highTone = !highTone;
+            }, 400);
         }
     </script>
+
 </body>
 </html>
